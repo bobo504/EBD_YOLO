@@ -1,0 +1,17 @@
+# YOLOv5 🚀 by Ultralytics, GPL-3.0 license
+
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+#path: ./hardhat_dataset/images  # dataset root dir
+train: ../../datasets/pest_IP08/images/train/
+val: ../../datasets/pest_IP08/images/val/
+# test: F:/dl_projects/plant_Insects/IP08/images/test
+
+names:
+  0: rice_leaf_roller
+  1: grub
+  2: wireworm
+  3: aphids
+  4: blister_beetle
+  5: Miridae
+  6: Unaspis_yanonensis
+  7: Cicadellidae

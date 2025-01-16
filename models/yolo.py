@@ -68,6 +68,11 @@ try:
 except ImportError:
     thop = None
 
+from models.CBAM import CBAMBlock
+from models.ECA import ECAAttention
+from models.EMA import EMA
+from models.BiFPN import BiFPN_Concat2, BiFPN_Concat3
+from models.DCNv3 import C3_DCNV3
 
 class Detect(nn.Module):
     """YOLOv5 Detect head for processing input tensors and generating detection outputs in object detection models."""
@@ -420,18 +425,19 @@ def parse_model(d, ch):
             nn.ConvTranspose2d,
             DWConvTranspose2d,
             C3x,
+            C3_DCNV3,
         }:
             c1, c2 = ch[f], args[0]
             if c2 != no:  # if not output
                 c2 = make_divisible(c2 * gw, ch_mul)
 
             args = [c1, c2, *args[1:]]
-            if m in {BottleneckCSP, C3, C3TR, C3Ghost, C3x}:
+            if m in {BottleneckCSP, C3, C3TR, C3Ghost, C3x, C3_DCNV3}:
                 args.insert(2, n)  # number of repeats
                 n = 1
         elif m is nn.BatchNorm2d:
             args = [ch[f]]
-        elif m is Concat:
+        elif m in [Concat, BiFPN_Concat2, BiFPN_Concat3]:
             c2 = sum(ch[x] for x in f)
         # TODO: channel, gw, gd
         elif m in {Detect, Segment}:
@@ -444,6 +450,8 @@ def parse_model(d, ch):
             c2 = ch[f] * args[0] ** 2
         elif m is Expand:
             c2 = ch[f] // args[0] ** 2
+        elif m in {CBAMBlock, EMA}:
+            args = [ch[f], *args]
         else:
             c2 = ch[f]
 
@@ -462,7 +470,7 @@ def parse_model(d, ch):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cfg", type=str, default="yolov5s.yaml", help="model.yaml")
+    parser.add_argument("--cfg", type=str, default="yolov5n.yaml", help="yolov5_pest/ebd_yolo.yaml")
     parser.add_argument("--batch-size", type=int, default=1, help="total batch size for all GPUs")
     parser.add_argument("--device", default="", help="cuda device, i.e. 0 or 0,1,2,3 or cpu")
     parser.add_argument("--profile", action="store_true", help="profile model speed")
