@@ -5,6 +5,10 @@ A Real-time Lightweight Crop Pest Detection Algorithm using Edge Devices
 2. Create a virtual environment python >= 3.8
 3. Install Pytorch
 4. pip install -r requrements.txt
+5. install DCNv3 (Linux operating system is strongly recommended)
+   cd models/ops_dcnv3
+   ./make.sh
+   or using pip install at https://github.com/OpenGVLab/InternImage/releases/tag/whl_files
 # Code Description
 1. dataset configure file: "data/pest-08.yaml"
 2. model configure files: "models/yolov5-pest/*.yaml"
